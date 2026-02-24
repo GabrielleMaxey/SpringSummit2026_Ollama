@@ -1,0 +1,1 @@
+# SpringSummit2026_Ollama
