@@ -1,0 +1,23 @@
+[
+"""
+Title: BGP Neighbor Down - Core Checklist
+- Confirm physical link status and errors (interfaces counters).
+- Check BGP hold timers and keepalives; 'hold time expired' often indicates loss/congestion.
+- Verify MTU on the path if sessions flap during peak.
+- Correlate with interface link events (down/up).
+- Validate reachability (ping, traceroute) and control-plane policing.
+""",
+"""
+Title: One-Way Audio Troubleshooting (SIP/RTP)
+- Confirm SDP offers correct IP/port; check NAT and ALG behavior.
+- Verify RTP is flowing both directions (packet captures, SBC stats).
+- Look for codec mismatch, asymmetric routing, firewall pinholes timing out.
+- For intermittent issues, correlate with jitter/loss; enable RTCP stats if available.
+""",
+"""
+Title: QoS Quick Notes
+- For voice, prioritize RTP (DSCP EF) and SIP signaling (CS3/AF31 per policy).
+- Validate marking at ingress and no remarking in transit.
+- Check queue drops and shaping policies on egress.
+"""
+]
