@@ -1,0 +1,42 @@
+# VoIP Configuration - 2023 Baseline
+# SIP Trunk Configuration and Dial Plan
+
+[SIP_TRUNKS]
+- sip_trunk_primary: carrier=Verizon, codec=G.711, encryption=TLS, bandwidth=2Mbps, priority=1
+- sip_trunk_secondary: carrier=AT&T, codec=G.729, encryption=TLS, bandwidth=1Mbps, priority=2
+- sip_trunk_backup: carrier=Level3, codec=G.711, encryption=SRTP, bandwidth=1.5Mbps, priority=3
+- sip_trunk_voicemailgw: carrier=InternalVMS, codec=G.711, encryption=none, bandwidth=0.5Mbps, priority=10
+- sip_trunk_sipex_prod: carrier=SIPex, codec=G.711, encryption=TLS, bandwidth=2Mbps, priority=4
+
+[DIAL_PLAN]
+- pattern_911: destination=PSTN, treatment=immediate_routing, recording=enabled
+- pattern_1234567890: destination=internal_extension, treatment=local_delivery, recording=disabled
+- pattern_201[0-9]: destination=external_carrier, treatment=route_via_primary, recording=enabled
+- pattern_555[0-9]{4}: destination=announcement, treatment=play_msg, recording=disabled
+- pattern_411: destination=directory_service, treatment=query_handler, recording=enabled
+
+[VOICEMAIL_SETTINGS]
+- vm_server: 192.168.10.5, port=5060, reliability=99.5%, backup_enabled=true
+- vm_greeting_length: 120 seconds max
+- vm_storage_quota: 100MB per user
+- vm_retention: 30 days default
+- vm_notification: email_enabled=true, sms_enabled=true
+
+[CALL_QUALITY_PARAMETERS]
+- jitter_threshold: 30ms max acceptable
+- packet_loss_threshold: 0.1% max acceptable
+- latency_threshold: 150ms one-way max
+- MOS_minimum: 3.5 target
+- codec_priority: G.711 > G.729 > others
+
+[SBC_ENDPOINTS]
+- sbc_primary: 10.20.1.100, firmware=v8.2.1, capacity=10000_cps
+- sbc_secondary: 10.20.1.101, firmware=v8.2.1, capacity=8000_cps
+- sbc_monitoring: 10.20.2.50, status_check=enabled, alert_threshold=80%
+
+[SECURITY_POLICIES]
+- tls_version: 1.2 minimum required
+- srtp_enforcement: enabled_for_sensitive_calls
+- rate_limiting: 100 calls/sec per IP
+- blacklist_countries: [KP, IR, SY]
+- whitelist_carriers: [Verizon, AT&T, Level3, SIPex]

@@ -1,0 +1,43 @@
+# VoIP Configuration - 2026 Updated
+# SIP Trunk Configuration and Dial Plan
+
+[SIP_TRUNKS]
+- sip_trunk_primary: carrier=Verizon, codec=G.711, encryption=TLS, bandwidth=4Mbps, priority=1
+- sip_trunk_secondary: carrier=AT&T, codec=G.729, encryption=TLS, bandwidth=1Mbps, priority=2
+- sip_trunk_backup_new: carrier=CenturyLink, codec=G.711, encryption=SRTP, bandwidth=2Mbps, priority=3
+- sip_trunk_voicemailgw: carrier=CloudVMS_AWS, codec=G.711, encryption=TLS, bandwidth=1Mbps, priority=10
+- sip_trunk_teams_integration: carrier=Microsoft365, codec=opus, encryption=TLS, bandwidth=3Mbps, priority=5
+
+[DIAL_PLAN]
+- pattern_911: destination=PSTN, treatment=immediate_routing, recording=enabled
+- pattern_1234567890: destination=internal_extension, treatment=local_delivery, recording=disabled
+- pattern_201[0-9]: destination=external_carrier, treatment=route_via_primary, recording=enabled
+- pattern_teams_federated: destination=teams_gateway, treatment=teams_routing, recording=enabled
+- pattern_411: destination=directory_service, treatment=query_handler, recording=enabled
+
+[VOICEMAIL_SETTINGS]
+- vm_server: voicemail.cloud.aws.com, port=5061, reliability=99.99%, backup_enabled=true
+- vm_greeting_length: 180 seconds max
+- vm_storage_quota: 500MB per user
+- vm_retention: 90 days default
+- vm_notification: email_enabled=true, sms_enabled=true, teams_enabled=true
+
+[CALL_QUALITY_PARAMETERS]
+- jitter_threshold: 20ms max acceptable
+- packet_loss_threshold: 0.05% max acceptable
+- latency_threshold: 100ms one-way max
+- MOS_minimum: 4.0 target
+- codec_priority: opus > G.711 > G.729 > others
+
+[SBC_ENDPOINTS]
+- sbc_primary: 10.20.1.100, firmware=v9.5.3, capacity=20000_cps
+- sbc_secondary: 10.20.1.101, firmware=v9.5.3, capacity=15000_cps
+- sbc_tertiary: 10.20.1.102, firmware=v9.5.3, capacity=15000_cps
+- sbc_monitoring: 10.20.2.50, status_check=enabled, alert_threshold=85%
+
+[SECURITY_POLICIES]
+- tls_version: 1.3 minimum required
+- srtp_enforcement: enabled_for_all_calls
+- rate_limiting: 200 calls/sec per IP
+- blacklist_countries: [KP, IR, SY, others_TBD]
+- whitelist_carriers: [Verizon, AT&T, CenturyLink, Microsoft365]
